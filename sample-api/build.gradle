@@ -1,0 +1,5 @@
+
+dependencies {
+    compileOnly project(':sample-domain')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
