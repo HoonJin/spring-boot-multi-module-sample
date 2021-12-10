@@ -1,4 +1,5 @@
 rootProject.name = 'sample'
 include 'sample-domain'
 include 'sample-api'
+include 'sample-discovery'
 
