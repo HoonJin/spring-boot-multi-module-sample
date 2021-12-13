@@ -6,8 +6,6 @@ import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 
@@ -28,7 +26,6 @@ public class UserService {
                 .pwd(request.getPwd())
                 .createdAt(LocalDateTime.now())
                 .build();
-        log.info("userDto = " + userDto);
 
         User user = User.builder()
                 .email(userDto.getEmail())
@@ -37,7 +34,6 @@ public class UserService {
                 .createdAt(userDto.getCreatedAt())
                 .build();
         user.setEncryptedPwd("encrypted");
-        log.info("user= " + user);
         userRepository.save(user);
 
         return userDto;

@@ -1,10 +1,13 @@
 package com.hoonjin.sample.user.controller;
 
 import com.hoonjin.sample.user.domain.RequestUser;
+import com.hoonjin.sample.user.domain.ResponseUser;
 import com.hoonjin.sample.user.domain.UserDto;
 import com.hoonjin.sample.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +21,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users")
-    public UserDto createUser(@RequestBody RequestUser request) {
-        return userService.createUser(request);
+    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser request) {
+        UserDto userDto = userService.createUser(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ResponseUser.of(userDto));
     }
 
     @GetMapping("/user-service/health_check")
