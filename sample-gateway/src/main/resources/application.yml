@@ -13,6 +13,12 @@ spring:
             preLogger: true
             postLogger: true
       routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+          filters:
+            - CustomFilter
         - id: first-service
           uri: lb://FIRST-SERVICE
           predicates:

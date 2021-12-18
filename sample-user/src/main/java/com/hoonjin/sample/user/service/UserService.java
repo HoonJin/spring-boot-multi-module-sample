@@ -1,6 +1,7 @@
 package com.hoonjin.sample.user.service;
 
 import com.hoonjin.sample.user.domain.RequestUser;
+import com.hoonjin.sample.user.domain.ResponseUser;
 import com.hoonjin.sample.user.domain.UserDto;
 import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -42,5 +44,22 @@ public class UserService {
         userRepository.save(user);
 
         return userDto;
+    }
+
+    public UserDto getUserByUserId(String userId) {
+        UserDto userDto = userRepository.findByUserId(userId).map(u ->
+                UserDto.builder()
+                        .userId(u.getUserId())
+                        .email(u.getEmail())
+                        .name(u.getName())
+                        .createdAt(u.getCreatedAt())
+                        .build()
+        ).orElseThrow();
+        userDto.setOrders(new ArrayList<>());
+        return userDto;
+    }
+
+    public Iterable<User> getUserByAll() {
+        return userRepository.findAll();
     }
 }

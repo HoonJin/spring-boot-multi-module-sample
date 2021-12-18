@@ -3,15 +3,18 @@ package com.hoonjin.sample.user.controller;
 import com.hoonjin.sample.user.domain.RequestUser;
 import com.hoonjin.sample.user.domain.ResponseUser;
 import com.hoonjin.sample.user.domain.UserDto;
+import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,12 +31,32 @@ public class UserController {
                 .body(ResponseUser.of(userDto));
     }
 
-    @GetMapping("/user-service/health_check")
-    public String status() {
-        return "working in userservice";
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<User> users = userService.getUserByAll();
+        List<ResponseUser> result = StreamSupport.stream(users.spliterator(), false)
+                .map(ResponseUser::of)
+                .collect(Collectors.toList());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
     }
 
-    @GetMapping("/user-service/welcome")
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable String userId) {
+        UserDto dto = userService.getUserByUserId(userId);
+        ResponseUser result = ResponseUser.of(dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(result);
+    }
+
+    @GetMapping("/health_check")
+    public String status(HttpServletRequest request) {
+        return "working in userservice on PORT " + request.getServerPort();
+    }
+
+    @GetMapping("/welcome")
     public String welcome() {
         return environment.getProperty("greeting.message");
     }

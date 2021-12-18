@@ -3,6 +3,7 @@ package com.hoonjin.sample.user.domain;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Setter(AccessLevel.NONE)
@@ -22,4 +23,7 @@ public class UserDto {
     private LocalDateTime createdAt;
 
     private String encryptedPwd;
+
+    @Setter
+    private List<ResponseOrder> orders;
 }
