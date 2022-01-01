@@ -8,3 +8,5 @@ include 'sample-second'
 include 'sample-gateway'
 include 'sample-ether'
 include 'sample-catalog'
+include 'sample-order'
+
