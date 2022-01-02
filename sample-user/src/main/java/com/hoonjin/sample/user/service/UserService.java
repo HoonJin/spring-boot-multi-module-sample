@@ -1,15 +1,16 @@
 package com.hoonjin.sample.user.service;
 
 import com.hoonjin.sample.user.domain.RequestUser;
-import com.hoonjin.sample.user.domain.ResponseUser;
 import com.hoonjin.sample.user.domain.UserDto;
 import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -61,5 +62,13 @@ public class UserService {
 
     public Iterable<User> getUserByAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("user name is not found"));
+
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getEncryptedPwd(),
+                true, true, true, true, new ArrayList<>());
     }
 }
