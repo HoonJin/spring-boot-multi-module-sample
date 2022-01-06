@@ -16,6 +16,15 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/users/login
+            - method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - CustomFilter
+            - RewritePath=/users/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/users/**
           filters:
             - CustomFilter

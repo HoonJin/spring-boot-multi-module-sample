@@ -16,8 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final Environment environment;
     private final UserService userService;
+    private final Environment environment;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     // 권한관련
@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        AuthenticationFilter filter = new AuthenticationFilter();
+        AuthenticationFilter filter = new AuthenticationFilter(authenticationManager(), userService, environment);
         filter.setAuthenticationManager(authenticationManager());
         return filter;
     }
@@ -43,6 +43,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
-        super.configure(auth);
     }
 }

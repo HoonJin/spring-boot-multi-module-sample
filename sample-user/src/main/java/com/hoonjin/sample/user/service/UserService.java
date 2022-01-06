@@ -71,4 +71,8 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getEncryptedPwd(),
                 true, true, true, true, new ArrayList<>());
     }
+
+    public User getUserDetailsByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
+    }
 }
