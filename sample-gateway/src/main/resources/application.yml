@@ -17,11 +17,19 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/users/login
-            - method=POST
+            - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
             - CustomFilter
             - RewritePath=/users/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+            - Method=GET
+          filters:
+            - AuthorizationHeaderFilter
+            - CustomFilter
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -68,3 +76,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+token:
+  secret: user_token
