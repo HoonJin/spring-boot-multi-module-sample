@@ -16,6 +16,15 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/users/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - CustomFilter
+            - RewritePath=/users/actuator/(?<segment>.*), /actuator/$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/users/login
             - Method=POST
           filters:
@@ -77,5 +86,8 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-token:
-  secret: user_token
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, refresh, beans, info

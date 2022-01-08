@@ -1,10 +1,13 @@
 server:
   port: 8888
+
 spring:
   application:
     name: config-service
+  profiles:
+    active: native
   cloud:
     config:
       server:
-        git:
-          uri: input url config server repository
+        native:
+          search-locations: optional:classpath:/
