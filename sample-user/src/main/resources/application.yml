@@ -22,6 +22,11 @@ spring:
       use-new-id-generator-mappings: true
     generate-ddl: true
     show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 greeting:
   message: welcome user service

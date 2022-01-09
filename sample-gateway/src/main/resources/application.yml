@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: gateway-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     gateway:
       default-filters:
@@ -90,4 +95,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, refresh, beans, info
+        include: health, refresh, beans, info, httptrace, busrefresh, busenv
