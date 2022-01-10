@@ -1,19 +1,26 @@
 package com.hoonjin.sample.user.service;
 
 import com.hoonjin.sample.user.domain.RequestUser;
+import com.hoonjin.sample.user.domain.ResponseOrder;
 import com.hoonjin.sample.user.domain.UserDto;
 import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,7 +29,9 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final Environment environment;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final RestTemplate restTemplate;
 
     public UserDto createUser(RequestUser request) {
         UserDto userDto = UserDto.builder()
@@ -56,7 +65,12 @@ public class UserService implements UserDetailsService {
                         .createdAt(u.getCreatedAt())
                         .build()
         ).orElseThrow();
-        userDto.setOrders(new ArrayList<>());
+
+        String url = String.format(environment.getProperty("order-service.url"), userId);
+        ResponseEntity<List<ResponseOrder>> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+
+        userDto.setOrders(response.getBody());
         return userDto;
     }
 

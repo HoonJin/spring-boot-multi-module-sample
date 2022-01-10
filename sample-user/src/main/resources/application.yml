@@ -1,7 +1,6 @@
 server:
   port: 0
 
-
 spring:
   application:
     name: user-service
@@ -39,6 +38,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+order-service:
+  url: http://ORDER-SERVICE/order-service/%s/orders
 
 management:
   endpoints:

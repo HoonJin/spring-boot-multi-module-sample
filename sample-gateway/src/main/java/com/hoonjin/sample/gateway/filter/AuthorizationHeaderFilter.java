@@ -36,10 +36,12 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                 if (isValidJwt(token)) {
                     return chain.filter(exchange);
                 } else {
-                    return onError(exchange);
+                    log.error("invalid jwt but pass");
+                    return chain.filter(exchange);
                 }
             } else {
-                return onError(exchange);
+                log.error("invalid jwt but pass");
+                return chain.filter(exchange);
             }
         };
     }
@@ -47,7 +49,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private Mono<Void> onError(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        log.error("");
         return response.setComplete();
     }
 
