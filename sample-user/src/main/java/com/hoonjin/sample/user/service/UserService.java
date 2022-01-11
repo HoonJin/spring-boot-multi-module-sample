@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final Environment environment;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    private final RestTemplate restTemplate;
+    private final OrderServiceClient orderServiceClient;
 
     public UserDto createUser(RequestUser request) {
         UserDto userDto = UserDto.builder()
@@ -66,11 +65,8 @@ public class UserService implements UserDetailsService {
                         .build()
         ).orElseThrow();
 
-        String url = String.format(environment.getProperty("order-service.url"), userId);
-        ResponseEntity<List<ResponseOrder>> response =
-                restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
-
-        userDto.setOrders(response.getBody());
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        userDto.setOrders(orders);
         return userDto;
     }
 

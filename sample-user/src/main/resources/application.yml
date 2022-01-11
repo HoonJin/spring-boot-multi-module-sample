@@ -39,11 +39,12 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-order-service:
-  url: http://ORDER-SERVICE/order-service/%s/orders
-
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
+logging:
+  level:
+    com.hoonjin.sample.user: DEBUG
