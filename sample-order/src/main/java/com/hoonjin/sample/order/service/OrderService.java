@@ -14,6 +14,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final KafkaProducer kafkaProducer;
 
     public Order createOrder(OrderDto orderDto) {
         Order order = new Order();
@@ -23,6 +24,8 @@ public class OrderService {
         order.setProductId(orderDto.getProductId());
         order.setUnitPrice(orderDto.getUnitPrice());
         order.setUserId(orderDto.getUserId());
+
+        kafkaProducer.send("example-catalog-topic", orderDto);
 
         return orderRepository.save(order);
     }

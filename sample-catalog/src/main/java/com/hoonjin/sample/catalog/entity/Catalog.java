@@ -1,6 +1,7 @@
 package com.hoonjin.sample.catalog.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -22,6 +23,7 @@ public class Catalog implements Serializable {
     @Column(nullable = false)
     private String productName;
 
+    @Setter
     @Column(nullable = false)
     private Integer stock;
 
