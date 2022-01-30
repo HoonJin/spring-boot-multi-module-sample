@@ -7,6 +7,8 @@ import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,9 +31,9 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final Environment environment;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     private final OrderServiceClient orderServiceClient;
+    private final CircuitBreakerFactory circuitBreakerFactoryCustomizer;
 
     public UserDto createUser(RequestUser request) {
         UserDto userDto = UserDto.builder()
@@ -65,7 +68,8 @@ public class UserService implements UserDetailsService {
                         .build()
         ).orElseThrow();
 
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        CircuitBreaker circuitbreaker = circuitBreakerFactoryCustomizer.create("circuitbreaker");
+        List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> List.of());
         userDto.setOrders(orders);
         return userDto;
     }
