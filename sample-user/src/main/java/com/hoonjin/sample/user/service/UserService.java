@@ -68,8 +68,10 @@ public class UserService implements UserDetailsService {
                         .build()
         ).orElseThrow();
 
+        log.info("before call order service");
         CircuitBreaker circuitbreaker = circuitBreakerFactoryCustomizer.create("circuitbreaker");
         List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId), throwable -> List.of());
+        log.info("after call order service");
         userDto.setOrders(orders);
         return userDto;
     }

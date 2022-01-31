@@ -5,6 +5,7 @@ import com.hoonjin.sample.order.dto.ResponseOrder;
 import com.hoonjin.sample.order.entity.Order;
 import com.hoonjin.sample.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
 
     private final OrderService orderService;
@@ -28,9 +30,11 @@ public class OrderController {
 
     @GetMapping("/order-service/{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> getOrder(@PathVariable String userId) {
+        log.info("before retrieve order data");
         List<Order> orders = orderService.getOrdersByUserId(userId);
         List<ResponseOrder> res = orders.stream().map(ResponseOrder::of)
                 .collect(Collectors.toList());
+        log.info("after retrieve order data");
         return ResponseEntity.ok(res);
     }
 }
