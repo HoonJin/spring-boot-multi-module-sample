@@ -53,6 +53,13 @@ spring:
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
+            - Path=/order-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RewritePath=/order-service/actuator/(?<segment>.*), /actuator/$\{segment}
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
             - Path=/order-service/**
           filters:
             - CustomFilter
@@ -95,4 +102,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, refresh, beans, info, httptrace, busrefresh, busenv
+        include: health, refresh, beans, info, httptrace, busrefresh, busenv, prometheus, metrics

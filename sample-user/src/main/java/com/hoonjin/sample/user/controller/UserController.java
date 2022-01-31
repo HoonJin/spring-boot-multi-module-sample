@@ -5,6 +5,7 @@ import com.hoonjin.sample.user.domain.ResponseUser;
 import com.hoonjin.sample.user.domain.UserDto;
 import com.hoonjin.sample.user.entity.User;
 import com.hoonjin.sample.user.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class UserController {
                 .body(ResponseUser.of(userDto));
     }
 
+    @Timed(value = "users", longTask = true)
     @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> getUsers() {
         Iterable<User> users = userService.getUserByAll();
